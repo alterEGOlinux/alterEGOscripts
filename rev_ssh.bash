@@ -8,15 +8,6 @@
 ##   description   : Set up a reverse ssh connexion.                         ##
 ## _________________________________________________________________________ ##
 
-#--- In order to this to work, generate a ssh-key.
-#... Otherwise, the script will keep asking for a password.
-#... localhost must be defined in /etc/hosts on the remote machine on
-#... which this script is running.
-#... Use a tmux session (detached) to remain connected, even after logging out
-#... of the machine.
-#... At home, connect to the reverse shell:
-#... $ ssh -p 2010 localhost
-
 msg_action() {
     _msg="${1}"
 
@@ -25,9 +16,6 @@ msg_action() {
     _msg_reset="\033[0m"
 
     printf '%b\n' "${_msg_green}[*]${_msg_reset} ${_msg_bold}${_msg}${_msg_reset}"
-    if [[ ${DISPLAY} ]]; then
-        notify-send --urgency=normal "[*] ${_msg}"
-    fi
 }
 
 msg_result() {
@@ -38,9 +26,6 @@ msg_result() {
     _msg_reset="\033[0m"
 
     printf '%b\n' "${_msg_blue}[-]${_msg_reset} ${_msg_bold}${_msg}${_msg_reset}"
-    if [[ ${DISPLAY} ]]; then
-        notify-send --urgency=normal "[-] ${_msg}"
-    fi
 }
 
 msg_warning() {
@@ -51,9 +36,31 @@ msg_warning() {
     _msg_reset="\033[0m"
 
     printf '%b\n' "${_msg_red}[!]${_msg_reset} ${_msg_bold}${_msg}${_msg_reset}"
-    if [[ ${DISPLAY} ]]; then
-        notify-send --urgency=critical "[!] ${_msg}"
-    fi
+}
+
+usage() {
+    _bold=$(printf '%b' "\033[1m")
+    _reset=$(printf '%b' "\033[0m")
+
+    msg_action "HELP"
+    cat << EOF
+${_bold}USAGE:${_reset} rev_ssh.bash <user@home_address:port>
+
+  ${_bold}Localhost${_reset}
+
+  ${_bold}SSH key vs Password${_reset}
+
+#--- In order to this to work, generate a ssh-key.
+#... Otherwise, the script will keep asking for a password.
+#... localhost must be defined in /etc/hosts on the remote machine on
+#... which this script is running.
+#... Use a tmux session (detached) to remain connected, even after logging out
+#... of the machine.
+#... At home, connect to the reverse shell:
+#... $ ssh -p 2010 localhost
+
+
+EOF
 }
 
 reverse_ssh() {
@@ -75,6 +82,8 @@ case ${@} in
         port=$(cut -d ':' -f2 <<< "${@}")
         reverse_ssh
         ;; 
+
+    * ) usage;;
 
 esac
 
