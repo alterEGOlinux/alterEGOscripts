@@ -46,6 +46,25 @@ usage() {
     cat << EOF
 ${_bold}USAGE:${_reset} rev_ssh.bash <user@home_address:port>
 
+  ${_bold}How does it work: the basic${_reset}
+
+SSH reverse tunneling uses local port forwarding on the local machine from an
+already existing ssh connection:
+
+  $ ssh user@local_machine
+  local machine <- ssh connection <- remote server
+
+Using -R option, a specified port on the local machine will be listening and
+forward the reverse connection through the secured tunnel to port 22 on the 
+remote server.
+
+                                         ssh tunnel
+                                <-------------------------
+  local machine:<local_port> ->    reversed connection     -> remote server:22
+                                <-------------------------
+
+  ${_bold}The other options${_reset}
+
   ${_bold}Localhost${_reset}
 
   ${_bold}SSH key vs Password${_reset}
@@ -59,7 +78,10 @@ ${_bold}USAGE:${_reset} rev_ssh.bash <user@home_address:port>
 #... At home, connect to the reverse shell:
 #... $ ssh -p 2010 localhost
 
+  ${_bold}Further reading${_reset}
 
+• https://www.ssh.com/academy/ssh/tunneling/example
+• https://www.howtogeek.com/428413/what-is-reverse-ssh-tunneling-and-how-to-use-it/
 EOF
 }
 
@@ -69,7 +91,8 @@ reverse_ssh() {
     msg_result "Use ssh -p ${port} localhost at home..."
     while true
     do
-        ssh -f ${user}@${home_address} -R ${port}:localhost:22  -N -o ExitOnForwardFailure=yes -o ServerAliveInterval=60
+        # ssh -f ${user}@${home_address} -R ${port}:localhost:22  -N -o ExitOnForwardFailure=yes -o ServerAliveInterval=60
+        ssh ${user}@${home_address} -R ${port}:localhost:22 -o ExitOnForwardFailure=yes -o ServerAliveInterval=60
         sleep 180
     done
 }
