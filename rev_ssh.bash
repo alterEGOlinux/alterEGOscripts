@@ -4,7 +4,7 @@
 ##                                                                           ##
 ## /usr/local/bin/rev_ssh.bash                                               ##
 ##   created       : 2022-01-10 16:23:27 UTC                                 ##
-##   updated       : 2022-01-10 16:23:36 UTC                                 ##
+##   updated       : 2022-01-18 12:39:33 UTC                                 ##
 ##   description   : Set up a reverse ssh connexion.                         ##
 ## _________________________________________________________________________ ##
 
@@ -52,7 +52,7 @@ SSH reverse tunneling uses local port forwarding on the local machine from an
 already existing ssh connection:
 
   $ ssh user@local_machine
-  local machine <- ssh connection <- remote server
+  local machine:22 <- ssh connection <- remote server
 
 Using -R option, a specified port on the local machine will be listening and
 forward the reverse connection through the secured tunnel to port 22 on the 
@@ -65,7 +65,13 @@ remote server.
 
   ${_bold}The other options${_reset}
 
-  ${_bold}Localhost${_reset}
+• ExitOnForwardFailure=yes
+
+• ServerAliveInterval=60
+
+Usually, a ssh connection will timeout and disconnect from the server if no
+data is received from the server. In order to bypass this, ServerAliveInterval
+option sets automatic message every 60 seconds if no activity occurs.
 
   ${_bold}SSH key vs Password${_reset}
 
@@ -80,8 +86,14 @@ remote server.
 
   ${_bold}Further reading${_reset}
 
-• https://www.ssh.com/academy/ssh/tunneling/example
-• https://www.howtogeek.com/428413/what-is-reverse-ssh-tunneling-and-how-to-use-it/
+• SSH.com - SSH port forwarding - Example, command, server config
+  https://www.ssh.com/academy/ssh/tunneling/example
+
+• Dave McKay - What Is Reverse SSH Tunneling? (and How to Use It)
+  https://www.howtogeek.com/428413/what-is-reverse-ssh-tunneling-and-how-to-use-it/
+
+• Hussein Nasser - SSH Tunneling - Local & Remote Port Forwarding (by Example)
+  https://www.youtube.com/watch?v=N8f5zv9UUMI
 EOF
 }
 
@@ -92,7 +104,7 @@ reverse_ssh() {
     while true
     do
         # ssh -f ${user}@${home_address} -R ${port}:localhost:22  -N -o ExitOnForwardFailure=yes -o ServerAliveInterval=60
-        ssh ${user}@${home_address} -R ${port}:localhost:22 -o ExitOnForwardFailure=yes -o ServerAliveInterval=60
+        ssh ${user}@${home_address} -R ${port}:localhost:22 -o ServerAliveInterval=60
         sleep 180
     done
 }
