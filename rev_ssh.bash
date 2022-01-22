@@ -46,6 +46,20 @@ usage() {
     cat << EOF | less -R
 ${_bold}USAGE:${_reset} rev_ssh.bash <user@home_address:port>
 
+This script creates a ssh reverse tunnel that allows you to bypass the firewall 
+blocking ssh incomming connections on a server or PC.
+
+Like a backdoor, it will call home and establish a secure connection within 
+which you can call back using its reverse tunnelling feature.
+
+On the server:
+
+  $ bash rev_ssh.bash <user@home_address:port>
+
+On the home machine:
+
+  $ ssh -p <port> localhost
+
 ## [ ${_blue}${_bold}How does it work: the basic${_reset} ] ----------------------------------------- ##
 
 SSH reverse tunneling uses local port forwarding on the local machine from an
@@ -106,6 +120,20 @@ running, even if you logout from your remote server session.
   $ tmux new-session -d -s <session_name>
   $ tmux send-keys -t <session_name> "bash rev_ssh.bash <user@home_address:port>" enter
 
+For example,
+
+  $ tmux new-session -d -s ETphoneHOME
+  $ tmux send-keys -t ETphoneHOME "bash rev_ssh.bash fantomH@192.168.0.150:6666" enter
+
+Once the tmux session started and rev_ssh.bash running within it, you can 
+logout. Unless you shutdown the remote server, the reverse ssh tunnel should 
+be up for you to access from home.
+
+If you want to access the tmux session later, to debbug or to kill the tunnel, 
+you can access it like so:
+
+  $ env TERM=screen-256color tmux -u a -t <session_name>
+
 ## [ ${_blue}${_bold}Further reading${_reset} ] ----------------------------------------------------- ##
 
 • ServerFault - SSH remote port forwarding failed
@@ -119,6 +147,8 @@ running, even if you logout from your remote server session.
 
 • Hussein Nasser - SSH Tunneling - Local & Remote Port Forwarding (by Example)
   https://www.youtube.com/watch?v=N8f5zv9UUMI
+
+## ----------- ${_blue}${_bold}{ alterEGO Linux: "Open the vault of knowledge" }${_reset} ----------- ##
 EOF
 }
 
