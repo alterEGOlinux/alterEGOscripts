@@ -8,6 +8,28 @@
 ##   description   : Set up a reverse ssh connexion.                         ##
 ## _________________________________________________________________________ ##
 
+msg() {
+  _msg_blue="\033[34m"
+  _msg_bold="\033[1m"
+  _msg_green="\033[32m"
+  _msg_red="\033[31m"
+  _msg_reset="\033[0m"
+
+  _msg="${2}"
+
+  case ${1} in
+
+    action )
+      printf '%b\n' "${_msg_green}[*]${_msg_reset} ${_msg_bold}${_msg}${_msg_reset}"
+      ;;
+    resutl )
+      printf '%b\n' "${_msg_blue}[-]${_msg_reset} ${_msg_bold}${_msg}${_msg_reset}"
+      ;;
+    warning )
+      printf '%b\n' "${_msg_red}[!]${_msg_reset} ${_msg_bold}${_msg}${_msg_reset}"
+  esac
+}
+
 msg_action() {
     _msg="${1}"
 
